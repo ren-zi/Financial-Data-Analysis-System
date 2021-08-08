@@ -1,0 +1,171 @@
+{#{% load staticfiles %}#}
+{##}
+{#<html lang="en">#}
+{#<head>#}
+{#    <link rel='shortcut icon' href="{% static 'iamges\favicon.ico' %}" type="image/x-icon">#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>#}
+{#    <title>数据可视化</title>#}
+{#    <link rel="stylesheet" type="text/css" href="templates\static\css\a.css">#}
+{#    <style type="text/css">#}
+        {#.class1{#}
+        {#    width: 640px;#}
+        {#    height: 480px;#}
+        {#    border: 5px solid red;#}
+        {#    border-top: 10px dashed yellow;#}
+        {#    background-image: url("./阿里和新浪.png");#}
+            {#border-width: 8px;#}
+            {#border-color:#ecff2e;#}
+            {#border-style:solid;#}
+            {#border-top-color:#ff6252 ;#}
+            {#border-bottom-style: dashed;#}
+
+    {#</style>#}
+{#    <style type="text/css">#}
+{#        a {#}
+{#            font-size:40px;#}
+{#            color:#cfff46;#}
+{#        }#}
+{#    </style>#}
+{#    <link rel="stylesheet" href="/static/css/index.css" />#}
+{#    <script>#}
+{#        alert('asd')#}
+{#    </script>#}
+{##}
+{#<script type="text/javascript" language="JavaScript" src="static/js/my.js" charset="UTF-8"></script>#}
+{#</head>#}
+{#<body>#}
+{##}
+{#<p class="class1">123</p>#}
+{#<a style="font-size: 40px; color:#64ff53">123</a>#}
+{#</body>#}
+{#</html>#}
+
+{% extends 'base.html' %}
+ {% block bar %}
+    <div class="col-md-9"style="justify-content: flex-end;">
+          <h1 class="page-header">个股最新信息</h1>
+      <div class="panel panel-primary">
+        <div class="panel-heading">个股信息列表<i class="fa fa-thumb-tack pull-right"></i></div>
+            <div class="panel-bady">
+                <div class="row" style="margin-bottom: 15px">
+                    <div class="col-md-4">
+                            <form action="" , method="POST">
+                                {% csrf_token %}
+                                <p>
+                                    股票名称<input type="text" name="name" placeholder="Search for...">
+                                    <button type="submit" class="btn">搜索</button>
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+      </div>
+    </div>
+
+ {% endblock %}
+
+{% block main %}
+
+
+    <table border="1" width="1200px" height="100px"  class="col-md-10">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>代码</th>
+        <th>象征</th>
+        <th>公司</th>
+        <th>地区</th>
+        <th>行业</th>
+        <th>上市</th>
+        <th>最新日期</th>
+        <th>开盘价</th>
+        <th>最高价</th>
+        <th>最低价</th>
+        <th>收盘价</th>
+        <th>收盘率</th>
+        <th>变化量</th>
+        <th>变化率</th>
+        <th>交易量</th>
+        <th>总量</th>
+        <th>操作</th>
+
+
+
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for publisher_obj in x %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+{#            <td>{{ publisher_obj.id }}</td>#}
+            <td>{{ publisher_obj.ts_code}}</td>
+            <td>{{ publisher_obj.symbol }}</td>
+            <td>{{ publisher_obj.name}}</td>
+            <td>{{ publisher_obj.area }}</td>
+            <td>{{ publisher_obj.industry }}</td>
+            <td>{{ publisher_obj.list_date }}</td>
+            <td>{{ publisher_obj.trade_date }}</td>
+            <td>{{ publisher_obj.open }}</td>
+            <td>{{ publisher_obj.high }}</td>
+            <td>{{ publisher_obj.low }}</td>
+            <td>{{ publisher_obj.close }}</td>
+            <td>{{ publisher_obj.pre_close }}</td>
+            <td>{{ publisher_obj.change}}</td>
+            <td>{{ publisher_obj.pct_chg }}</td>
+            <td>{{ publisher_obj.vol }}</td>
+            <td>{{ publisher_obj.amount }}</td>
+            <td>
+                <a href="/app01/draw/?id= {{ publisher_obj.ts_code}}">个股信息</a>
+                <a href="/app01/predict/?id= {{ publisher_obj.ts_code }}">价格预测</a>
+            </td>
+        </tr>
+    {% endfor %}
+
+    </tbody>
+
+    </table>
+
+<nav aria-label="Page navigation"  class="pull-right">
+             <ul  class="pagination">
+ <!-- 上一页 -->
+                 <li>
+                     {% if book_objs.has_previous %}
+                         <a href="{% url 'publisher_list' %}?page={{ book_objs.previous_page_number }}" aria-label="Previous">
+                             <span aria-hidden="true">&laquo;</span>
+                         </a>
+                     {% else %}
+                         <a href="{% url 'publisher_list' %}?page={{ current_page_num }}" aria-label="Previous" class="disabled">
+                             <span aria-hidden="true">&laquo;</span>
+                         </a>
+                     {% endif %}
+
+                 </li>
+ <!-- 页码-->
+                 {% for page_num in page_range %}
+                     <li class="{% if current_page_num == page_num %}active{% endif %}"><a href="{% url 'publisher_list' %}?page={{ page_num }}" >{{ page_num }}</a></li>
+                 {% endfor %}
+ <!-- 下一页 -->
+                 <li>
+                     {% if book_objs.has_next %}
+                         <a href="{% url 'publisher_list' %}?page={{ book_objs.next_page_number }}" aria-label="Next">
+                             <span aria-hidden="true">&raquo;</span>
+                         </a>
+                     {% else %}
+                         <a href="{% url 'publisher_list' %}?page={{ current_page_num }}" aria-label="Next" class="disabled">
+                             <span aria-hidden="true">&raquo;</span>
+                         </a>
+                     {% endif %}
+
+                 </li>
+             </ul>
+         </nav>
+
+     </div>
+ </div>
+</body>
+
+{% endblock %}
